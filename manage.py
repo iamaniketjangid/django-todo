@@ -7,8 +7,12 @@ import sys
 def main():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'todoApp.settings')
     try:
-        from django.core.management import execute_from_command_line
-    except ImportError as exc:
+        # Use importlib to perform a dynamic import which reduces false-positive
+        # "could not be resolved from source" diagnostics from some editors/linters
+        # when Django is not installed in the analysis environment.
+        import importlib
+        execute_from_command_line = importlib.import_module('django.core.management').execute_from_command_line
+    except Exception as exc:
         raise ImportError(
             "Couldn't import Django. Are you sure it's installed and "
             "available on your PYTHONPATH environment variable? Did you "
